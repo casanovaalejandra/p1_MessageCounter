@@ -3,6 +3,8 @@ package edu.uprm.cse.bigdata;
 import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Reducer;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
 
@@ -10,13 +12,16 @@ public class MessageCounterReducer extends Reducer<Text,IntWritable,Text,IntWrit
     @Override
     protected void reduce(Text key, Iterable<IntWritable> values, Context context)
             throws IOException, InterruptedException {
-        //counter
+        // setup a counter
         int count = 0;
+        // iterator over list of 1s, to count them (no size() or length() method available)
+        for (IntWritable value : values ){
+            count +=value.get();
 
-        for (IntWritable value : values ) {
-            count++;
         }
-        context.write(key, new IntWritable(count));
+        System.out.println(count+" "+key);
 
+        // DEBUG
+        context.write(key, new IntWritable(count));
     }
 }
